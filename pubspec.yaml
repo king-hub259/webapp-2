@@ -35,8 +35,7 @@ dependencies:
   share_plus: ^10.0.2
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.0
-   prime_web:
-    path: ../prime_web
+  
 
 dev_dependencies:
   flutter_test:
