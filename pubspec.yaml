@@ -42,6 +42,9 @@ dev_dependencies:
     sdk: flutter
   very_good_analysis: ^6.0.0
   
+dependencies:
+  prime_web:
+    path: ../prime_web
 
 
 dependency_overrides:
