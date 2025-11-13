@@ -23,21 +23,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 late SharedPreferences pref;
 
-/// Define AppThemes to fix errors
-class AppThemes {
-  static final lightTheme = ThemeData(
-    brightness: Brightness.light,
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: Colors.white,
-  );
-
-  static final darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: Colors.black,
-  );
-}
-
 Future<bool> enableStoragePermission() async {
   if (Platform.isIOS) {
     if (await Permission.storage.isGranted) {
@@ -95,18 +80,24 @@ Future<void> main() async {
     await enableStoragePermission();
   }
 
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setInt('counter', counter);
+  await SharedPreferences.getInstance().then((prefs) {
+    prefs.setInt('counter', counter);
+    final bool isDarkTheme;
+    if (prefs.getBool('isDarkTheme') ?? ThemeMode.system == ThemeMode.dark) {
+      isDarkTheme = true;
+    } else {
+      isDarkTheme = false;
+    }
 
-  final bool isDarkTheme =
-      (prefs.getBool('isDarkTheme') ?? ThemeMode.system == ThemeMode.dark);
-
-  runApp(
-    ChangeNotifierProvider<ThemeProvider>(
-      create: (BuildContext context) => ThemeProvider(isDarkTheme: isDarkTheme),
-      child: const MyApp(),
-    ),
-  );
+    return runApp(
+      ChangeNotifierProvider<ThemeProvider>(
+        child: const MyApp(),
+        create: (BuildContext context) {
+          return ThemeProvider(isDarkTheme: isDarkTheme);
+        },
+      ),
+    );
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -142,17 +133,17 @@ class _MyAppState extends State<MyApp> {
             child: MaterialApp(
               title: appName,
               debugShowCheckedModeBanner: false,
-              themeMode: value.getTheme(), // works with ThemeProvider
+              themeMode: value.getTheme(),
               theme: AppThemes.lightTheme,
               darkTheme: AppThemes.darkTheme,
               navigatorKey: navigatorKey,
               onGenerateRoute: (RouteSettings settings) {
-                // using classic if/else to be compatible with Flutter < 3.0
-                if (settings.name == 'settings') {
-                  return CupertinoPageRoute(
-                      builder: (_) => const SettingsScreen());
-                }
-                return null;
+                return switch (settings.name) {
+                  'settings' => CupertinoPageRoute(
+                      builder: (_) => const SettingsScreen(),
+                    ),
+                  _ => null,
+                };
               },
               home: const SplashScreen(),
             ),
