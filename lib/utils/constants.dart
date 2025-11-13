@@ -12,11 +12,11 @@ export 'strings.dart';
 const String androidPackageName = 'com.wrteam.webviewprime';
 
 /// DO NOT ADD / AT THE END OF URL
-String baseurl = 'https://prime-web.wrteam.me/';
+String baseurl = 'https://app.edubest.com.ng';
 
 String databaseUrl = '$baseurl/api/';
 
-const appName = 'Prime Web';
+const appName = 'Pay1c';
 
 // Here is for only reference you have to change it from panel
 
